@@ -56,10 +56,22 @@ git push -u origin main
    - **Repository**: `TU_USUARIO/quiniela-wc2026`
    - **Branch**: `main`
    - **Main file path**: `app/dashboard.py`
-4. (Opcional) **Advanced settings** → Python version: deja la que viene, o **3.12**.
+4. **Advanced settings** (IMPORTANTE, para la contraseña):
+   - **Python version**: deja la que viene, o **3.12**.
+   - En el cuadro **Secrets**, pega esta línea con la clave que quieras:
+     ```toml
+     app_password = "tu-clave-secreta"
+     ```
+     Esta es la contraseña que pedirá la app. No queda en el repositorio.
 5. Pulsa **Deploy**. La primera vez tarda **2-5 minutos** (instala las librerías).
 6. Al terminar tendrás una URL pública, p. ej.:
    `https://quiniela-wc2026-xxxx.streamlit.app`
+   Al abrirla, pedirá la contraseña que pusiste en Secrets. Comparte URL + contraseña con
+   quien quieras que entre.
+
+> Si olvidaste poner el Secret: la app mostrará un aviso pidiéndolo. Ve a **Manage app →
+> Settings → Secrets**, añade `app_password = "..."`, guarda y la app se reinicia sola.
+> Para **cambiar la contraseña** más adelante: edita ese Secret (no hace falta tocar el código).
 
 ## Paso 5 — Compartir y usar en iPhone (iOS)
 
@@ -85,9 +97,10 @@ git push
 
 ## Cosas a tener en cuenta (importante y honesto)
 
-- **La app es pública**: cualquiera con el enlace puede verla y usar todas las páginas,
-  incluida "Ingreso de datos". Si te preocupa que alguien toque los datos, dímelo y le añado
-  una **contraseña** (pantalla de login simple).
+- **La app está protegida con contraseña**: solo entra quien tenga la clave que configures en
+  *Secrets* (`app_password`). Para cambiarla, edita ese Secret en Streamlit Cloud. La clave
+  **no** está en el repositorio. En local, la clave se lee de `.streamlit/secrets.toml` (también
+  fuera del repo); usa `.streamlit/secrets.toml.example` como plantilla.
 - **Ingreso de resultados en la nube**: en Streamlit Cloud el almacenamiento es **compartido y
   temporal**: si un visitante ingresa un resultado, lo ven todos, y se **reinicia** cuando la app
   se duerme por inactividad. Para datos persistentes de verdad haría falta una base de datos

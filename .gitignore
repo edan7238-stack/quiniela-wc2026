@@ -6,6 +6,9 @@ __pycache__/
 venv/
 .env
 
+# Secretos de Streamlit (contraseña de la app) — NUNCA subir al repo
+.streamlit/secrets.toml
+
 # IDE / SO / herramientas locales
 .idea/
 .vscode/

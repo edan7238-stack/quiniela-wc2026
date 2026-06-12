@@ -11,6 +11,7 @@ Ejecutar:  streamlit run app/dashboard.py
 """
 from __future__ import annotations
 
+import hmac
 import sys
 from pathlib import Path
 
@@ -26,6 +27,46 @@ from src import bracket, data_loader, elo, fifa, montecarlo, quiniela as q
 from src.predict import Predictor, format_prediction
 
 st.set_page_config(page_title="Modelo WC 2026", page_icon="⚽", layout="wide")
+
+
+# --------------------------------------------------------------------------- #
+# Acceso por contraseña (para el despliegue web)
+# --------------------------------------------------------------------------- #
+def require_password() -> None:
+    """Bloquea la app tras una pantalla de contraseña.
+
+    La clave se lee de `st.secrets["app_password"]` y NUNCA se guarda en el repositorio:
+    - En Streamlit Cloud: Manage app -> Settings -> Secrets -> `app_password = "tu-clave"`.
+    - En local: crea `.streamlit/secrets.toml` con esa misma línea (está en .gitignore).
+    Detiene la ejecución hasta que la contraseña sea correcta (compara con `hmac` para
+    evitar fugas por tiempo de respuesta).
+    """
+    try:
+        expected = str(st.secrets["app_password"])
+    except Exception:
+        expected = ""
+
+    if not expected:
+        st.error("🔒 Falta configurar la contraseña de la app.\n\n"
+                 "En **Streamlit Cloud**: *Manage app → Settings → Secrets* y añade:\n\n"
+                 "```toml\napp_password = \"tu-clave\"\n```\n\n"
+                 "En **local**: crea `.streamlit/secrets.toml` con esa misma línea.")
+        st.stop()
+
+    if st.session_state.get("auth_ok"):
+        return
+
+    def _on_submit() -> None:
+        ok = hmac.compare_digest(str(st.session_state.get("auth_pw", "")), expected)
+        st.session_state["auth_ok"] = ok
+        st.session_state.pop("auth_pw", None)   # no conservar la clave en memoria
+
+    st.markdown("## ⚽ Quiniela WC 2026")
+    st.caption("Introduce la contraseña para acceder.")
+    st.text_input("Contraseña", type="password", key="auth_pw", on_change=_on_submit)
+    if st.session_state.get("auth_ok") is False:
+        st.error("Contraseña incorrecta. Inténtalo de nuevo.")
+    st.stop()
 
 
 # --------------------------------------------------------------------------- #
@@ -352,6 +393,7 @@ def _append_csv(path: Path, row: dict):
 # Main
 # --------------------------------------------------------------------------- #
 def main():
+    require_password()
     st.sidebar.title("⚽ Modelo WC 2026")
     st.sidebar.caption("Predicción 1X2 + marcador exacto para la quiniela")
     page = st.sidebar.radio("Navegación", [
