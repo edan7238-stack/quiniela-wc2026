@@ -7,5 +7,5 @@ primaryColor = "#2563eb"
 base = "light"
 
 [server]
-# En la nube Streamlit gestiona el puerto; headless evita intentar abrir un navegador local.
-headless = true
+# Local: false abre el navegador solo. En Streamlit Cloud este valor lo gestiona la plataforma.
+headless = false
