@@ -1,0 +1,11 @@
+# Configuracion de la app web (Streamlit Community Cloud y local).
+[browser]
+gatherUsageStats = false
+
+[theme]
+primaryColor = "#2563eb"
+base = "light"
+
+[server]
+# En la nube Streamlit gestiona el puerto; headless evita intentar abrir un navegador local.
+headless = true

@@ -1,0 +1,26 @@
+# Quiniela WC 2026 - dependencias de la app web (Streamlit Community Cloud)
+# (Herramientas de desarrollo -pytest- y el agente -anthropic- estan en requirements-dev.txt)
+
+# Nucleo de datos y calculo
+pandas>=2.2
+numpy>=1.26
+scipy>=1.13
+
+# Machine Learning (Nivel 2)
+scikit-learn>=1.5
+lightgbm>=4.3          # fallback automatico a Regresion Logistica si no instala
+
+# Persistencia de modelos
+joblib>=1.4
+
+# Dashboard (interfaz principal)
+streamlit>=1.36
+plotly>=5.22
+
+# Extraccion del ranking FIFA (snapshot) e ingreso de resultados
+requests>=2.32
+beautifulsoup4>=4.12
+lxml>=5.2
+
+# Exportar predicciones a Excel (scripts/export_excel.py)
+openpyxl>=3.1

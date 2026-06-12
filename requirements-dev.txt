@@ -1,0 +1,9 @@
+# Dependencias solo para desarrollo local (NO necesarias para la app web).
+-r requirements.txt
+
+# Tests
+pytest>=8.2
+
+# Agente de ingreso de resultados por IA (scripts/agent_resultados.py) - API de Anthropic.
+# Requiere ANTHROPIC_API_KEY; no se usa en el despliegue web.
+anthropic>=0.69
