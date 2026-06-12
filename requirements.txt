@@ -1,26 +1,27 @@
-# Quiniela WC 2026 - dependencias de la app web (Streamlit Community Cloud)
-# (Herramientas de desarrollo -pytest- y el agente -anthropic- estan en requirements-dev.txt)
+# Quiniela WC 2026 - dependencias de la app web (Streamlit Community Cloud).
+# Versiones FIJADAS a las del entorno local para que los modelos .pkl carguen igual en la nube.
+# (Herramientas de desarrollo -pytest- y el agente -anthropic- estan en requirements-dev.txt.)
 
 # Nucleo de datos y calculo
-pandas>=2.2
-numpy>=1.26
-scipy>=1.13
+pandas==3.0.3
+numpy==2.4.6
+scipy==1.17.1
 
-# Machine Learning (Nivel 2)
-scikit-learn>=1.5
-lightgbm>=4.3          # fallback automatico a Regresion Logistica si no instala
+# Machine Learning (Nivel 2) - criticas para cargar ml_1x2.pkl
+scikit-learn==1.9.0
+lightgbm==4.6.0
 
 # Persistencia de modelos
-joblib>=1.4
+joblib==1.5.3
 
 # Dashboard (interfaz principal)
-streamlit>=1.36
-plotly>=5.22
+streamlit==1.58.0
+plotly==6.8.0
 
 # Extraccion del ranking FIFA (snapshot) e ingreso de resultados
-requests>=2.32
-beautifulsoup4>=4.12
-lxml>=5.2
+requests==2.34.2
+beautifulsoup4==4.15.0
+lxml==6.1.1
 
 # Exportar predicciones a Excel (scripts/export_excel.py)
-openpyxl>=3.1
+openpyxl==3.1.5
