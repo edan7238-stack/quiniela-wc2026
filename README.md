@@ -11,57 +11,53 @@ esperados** según las reglas de la quiniela, y reporta la confianza real de cad
 
 ## 🚀 Inicio rápido
 
-### Requisito previo: dataset de Kaggle
+### 🍎 Mac / Linux
 
-El modelo necesita el historial de partidos internacionales. Descárgalo gratis:
+**Requisitos previos:**
+- Python 3.11 o superior → descárgalo en https://www.python.org/downloads/ si no lo tienes
 
-1. Crea una cuenta en [kaggle.com](https://www.kaggle.com) (es gratis)
-2. Ve a este dataset: **[International football results from 1872 to 2017](https://www.kaggle.com/datasets/martj42/international-football-results-from-1872-to-2017)**
-3. Haz clic en **Download** → obtendrás un archivo llamado `archive.zip`
-4. Copia ese archivo a la **raíz del proyecto** (junto a este README)
-
----
-
-### 🍎 Mac / Linux — un solo comando
+**Pasos:**
 
 ```bash
-# 1. Clona el repo
+# 1. Clona el repositorio
 git clone https://github.com/edan7238-stack/quiniela-wc2026.git
 cd quiniela-wc2026
 
-# 2. Coloca archive.zip aquí (ver instrucciones arriba)
-
-# 3. Da permisos al script y ejecútalo
+# 2. Da permisos al script y ejecútalo
 chmod +x run_dashboard.sh
 ./run_dashboard.sh
 ```
 
-El script se encarga automáticamente de:
-- Verificar que tienes Python 3.11+
-- Instalar las dependencias
-- Extraer el dataset
-- Descargar el ranking FIFA
-- Entrenar el modelo
-- Abrir el dashboard en tu navegador en http://localhost:8501
+¡Listo! El script se encarga automáticamente de todo:
 
-> **¿No tienes Python 3.11+?** Descárgalo en https://www.python.org/downloads/
+- ✅ Verificar Python 3.11+
+- ✅ Instalar las dependencias
+- ✅ Extraer el dataset de partidos (`archive.zip`)
+- ✅ Extraer los datos xG/xGA (`archive(1).zip`)
+- ✅ Descargar el ranking FIFA
+- ✅ Entrenar el modelo
+- ✅ Abrir el dashboard en tu navegador → http://localhost:8501
 
----
+> La primera vez tarda 2-3 minutos. Las siguientes veces abre directo.
 
-### 🪟 Windows — doble clic
-
-Coloca `archive.zip` en la raíz del proyecto y haz doble clic en `run_dashboard.bat`.
+> Para cerrar el servidor: **Ctrl+C** en la terminal.
 
 ---
 
-### ⚙️ Instalación manual (avanzado)
+### 🪟 Windows
+
+Haz doble clic en `run_dashboard.bat`.
+
+---
+
+### ⚙️ Instalación manual (usuarios avanzados)
 
 ```bash
-pip install -r requirements.txt          # Python 3.11+ (probado en 3.13)
-python scripts/setup_data.py             # extrae el dataset Kaggle (archive.zip)
-python scripts/fetch_fifa.py             # descarga el ranking FIFA
-python scripts/train.py                  # entrena Elo + ML + Poisson
-streamlit run app/dashboard.py           # interfaz principal
+pip install -r requirements.txt
+python scripts/setup_data.py       # extrae archive.zip → data/raw/
+python scripts/fetch_fifa.py       # descarga el ranking FIFA
+python scripts/train.py            # entrena Elo + ML + Poisson
+streamlit run app/dashboard.py     # abre el dashboard
 ```
 
 ---
@@ -69,7 +65,7 @@ streamlit run app/dashboard.py           # interfaz principal
 ## Arquitectura en cascada
 
 ```
-[Histórico Kaggle (filtro reciente)] + [Ranking FIFA] + [xG/xGA opcional] + [Resultados manuales]
+[Histórico de partidos] + [Ranking FIFA] + [xG/xGA] + [Resultados manuales]
         │
   NIVEL 1  Elo dinámico + ancla FIFA        →  fuerza actual de cada selección
         │
@@ -118,16 +114,7 @@ se asignan a los partidos que más suben el total de puntos esperados.
 - Por partido: exacto 3 / resultado 1 / fallo 0. Comodines double/triple/all-in (2 c/u en grupos).
 - Posiciones de grupo (4/3/2) y mejores terceros (3 c/u).
 - Futuros: campeón 10 / subcampeón 6 / 3º 4 / 4º 2 / total de goles 4.
-- Goleador, balón de oro y equipo sorpresa son a nivel jugador/subjetivos → **entrada manual**.
-
----
-
-## xG/xGA (opcional)
-
-Si colocas un CSV en `data/xg.csv`, el cargador flexible (`src/team_ratings.py`) autodetecta
-el formato y mezcla el xG/xGA con la fuerza (Elo+FIFA) en el modelo de marcador (`XG_BLEND_W`).
-
-Sin el archivo, el modelo funciona solo con la fuerza.
+- Goleador, balón de oro y equipo sorpresa → **entrada manual**.
 
 ---
 
@@ -135,14 +122,14 @@ Sin el archivo, el modelo funciona solo con la fuerza.
 
 | Script                        | Qué hace                                                              |
 | ----------------------------- | --------------------------------------------------------------------- |
-| `scripts/setup_data.py`       | Extrae el dataset Kaggle a `data/raw/`.                               |
-| `scripts/setup_xg.py`         | Prepara `data/xg.csv` desde el CSV por-partido con xG del usuario.    |
+| `scripts/setup_data.py`       | Extrae el dataset de partidos a `data/raw/`.                          |
+| `scripts/setup_xg.py`         | Prepara `data/xg.csv` desde el CSV con xG del usuario.               |
 | `scripts/fetch_fifa.py`       | Descarga el ranking FIFA → `models/fifa_snapshot.csv`.                |
 | `scripts/train.py`            | Entrena Elo (+FIFA), ML 1X2 y Poisson.                                |
 | `scripts/simulate.py`         | Montecarlo del torneo → favoritos.                                    |
 | `scripts/backtest.py`         | Backtest fuera de muestra: acierto exacto/1X2 y puntos/partido.       |
-| `scripts/calibrate_xg.py`     | Calibra `XG_BLEND_W`/`XG_DECAY_PER_DAY` por backtest point-in-time.   |
-| `scripts/export_excel.py`     | Vuelca las predicciones de grupos a Excel (determinista, sin IA).     |
+| `scripts/calibrate_xg.py`     | Calibra `XG_BLEND_W`/`XG_DECAY_PER_DAY` por backtest point-in-time.  |
+| `scripts/export_excel.py`     | Vuelca las predicciones de grupos a Excel.                            |
 | `scripts/agent_resultados.py` | Agente (API Anthropic) que ingresa resultados desde capturas/enlaces. |
 
 ---
@@ -163,7 +150,7 @@ El optimizador saca **+0.04 pts/partido** sobre elegir el marcador más probable
 
 ```
 config/   settings.py · wc2026.py (grupos OFICIALES del sorteo + anfitriones)
-data/     raw/ (Kaggle) · wc2026_results.csv (manual) · xg.csv (opcional, lo aportas tú)
+data/     raw/ (partidos) · wc2026_results.csv (manual) · xg.csv
 models/   elo_ratings.csv · ml_1x2.pkl · poisson_params.pkl · fifa_snapshot.csv
 src/      data_loader · elo · fifa · features · ml_model · poisson · team_ratings ·
           montecarlo · predict · quiniela
